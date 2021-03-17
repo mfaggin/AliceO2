@@ -129,7 +129,7 @@ struct TaskXicMC {
         //Printf("MC Rec.: Y rejection: %g", YXic(candidate));
         continue;
       }
-      if (std::abs(candidate.flagMCMatchRec()) == XicToPKPi) {
+      if (std::abs(candidate.flagMCMatchRec()) == 1 << XicToPKPi) {
         // Get the corresponding MC particle.
         auto indexMother = RecoDecay::getMother(particlesMC, candidate.index0_as<aod::BigTracksMC>().mcParticle_as<soa::Join<aod::McParticles, aod::HfCandProng3MCGen>>(), 4232, true);
         auto particleMother = particlesMC.iteratorAt(indexMother);
@@ -144,13 +144,15 @@ struct TaskXicMC {
       }
     }
     // MC gen.
-    //Printf("MC Particles: %d", particlesMC.size());
+    Printf("MC Particles: %d", particlesMC.size());
     for (auto& particle : particlesMC) {
+      Printf("===> std::abs(particle.flagMCMatchGen()): %d", std::abs(particle.flagMCMatchGen()));
       if (cutYCandMax >= 0. && std::abs(RecoDecay::Y(array{particle.px(), particle.py(), particle.pz()}, RecoDecay::getMassPDG(particle.pdgCode()))) > cutYCandMax) {
-        //Printf("MC Gen.: Y rejection: %g", RecoDecay::Y(array{particle.px(), particle.py(), particle.pz()}, RecoDecay::getMassPDG(particle.pdgCode())));
+        Printf("MC Gen.: Y rejection: %g", RecoDecay::Y(array{particle.px(), particle.py(), particle.pz()}, RecoDecay::getMassPDG(particle.pdgCode())));
         continue;
       }
-      if (std::abs(particle.flagMCMatchGen()) == XicToPKPi) {
+      if (std::abs(particle.flagMCMatchGen()) == 1 << XicToPKPi) {
+        Printf("*** histo filling ***");
         registry.fill(HIST("hPtGen"), particle.pt());
         registry.fill(HIST("hEtaGen"), particle.eta());
       }

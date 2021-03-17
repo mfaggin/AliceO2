@@ -171,9 +171,10 @@ struct HFCandidateCreator3ProngMC {
       auto arrayDaughters = array{candidate.index0_as<aod::BigTracksMC>(), candidate.index1_as<aod::BigTracksMC>(), candidate.index2_as<aod::BigTracksMC>()};
 
       // D± → π± K∓ π±
-      //Printf("Checking D± → π± K∓ π±");
+      //Printf("Checking D± → π± K∓ π± MCRec");
       if (RecoDecay::getMatchedMCRec(particlesMC, arrayDaughters, 411, array{+kPiPlus, -kKPlus, +kPiPlus}, true, &sign) > -1) {
         flag = sign * (1 << DPlusToPiKPi);
+        //Printf("flag %d = %d * (1 << %d)", flag, sign, DPlusToPiKPi);
       }
 
       // Λc± → p± K∓ π±
@@ -182,6 +183,7 @@ struct HFCandidateCreator3ProngMC {
         auto indexRecLc = RecoDecay::getMatchedMCRec(particlesMC, arrayDaughters, 4122, array{+kProton, -kKPlus, +kPiPlus}, true, &sign, 2);
         if (indexRecLc > -1) {
           flag = sign * (1 << LcToPKPi);
+          //Printf("flag %d = %d * (1 << %d)", flag, sign, LcToPKPi);
 
           //Printf("Flagging the different Λc± → p± K∓ π± decay channels");
           RecoDecay::getDaughters(particlesMC, indexRecLc, &arrDaughIndex, array{0}, 1);
@@ -203,9 +205,10 @@ struct HFCandidateCreator3ProngMC {
 
       // Ξc± → p± K∓ π±
       if (flag == 0) {
-        Printf("Checking Ξc± → p± K∓ π± MCRec");
+        //Printf("Checking Ξc± → p± K∓ π± MCRec");
         if (RecoDecay::getMatchedMCRec(particlesMC, std::move(arrayDaughters), 4232, array{+kProton, -kKPlus, +kPiPlus}, true, &sign, 2) > -1) {
           flag = sign * (1 << XicToPKPi);
+          Printf("=== RecoMC Xic found!");
           Printf("flag %d = %d * (1 << %d)", flag, sign, XicToPKPi);
         }
       }
@@ -221,17 +224,19 @@ struct HFCandidateCreator3ProngMC {
       arrDaughIndex.clear();
 
       // D± → π± K∓ π±
-      //Printf("Checking D± → π± K∓ π±");
+      //Printf("Checking D± → π± K∓ π± MCGen");
       if (RecoDecay::isMatchedMCGen(particlesMC, particle, 411, array{+kPiPlus, -kKPlus, +kPiPlus}, true, &sign)) {
         flag = sign * (1 << DPlusToPiKPi);
+        //Printf("flag %d = %d * (1 << %d)", flag, sign, DPlusToPiKPi);
       }
 
       // Λc± → p± K∓ π±
       if (flag == 0) {
-        //Printf("Checking Λc± → p± K∓ π±");
+        //Printf("Checking Λc± → p± K∓ π± MCGen");
         auto isMatchedGenLc = RecoDecay::isMatchedMCGen(particlesMC, particle, 4122, array{+kProton, -kKPlus, +kPiPlus}, true, &sign, 2);
         if (isMatchedGenLc) {
           flag = sign * (1 << LcToPKPi);
+          //Printf("flag %d = %d * (1 << %d)", flag, sign, LcToPKPi);
 
           //Printf("Flagging the different Λc± → p± K∓ π± decay channels");
           RecoDecay::getDaughters(particlesMC, particle.globalIndex(), &arrDaughIndex, array{0}, 1);
@@ -253,9 +258,10 @@ struct HFCandidateCreator3ProngMC {
 
       // Ξc± → p± K∓ π±
       if (flag == 0) {
-        Printf("Checking Ξc± → p± K∓ π± MCGen");
+        //Printf("Checking Ξc± → p± K∓ π± MCGen");
         if (RecoDecay::isMatchedMCGen(particlesMC, particle, 4232, array{+kProton, -kKPlus, +kPiPlus}, true, &sign, 2)) {
           flag = sign * (1 << XicToPKPi);
+          Printf("=== GenMC Xic found!");
           Printf("flag %d = %d * (1 << %d)", flag, sign, XicToPKPi);
         }
       }
